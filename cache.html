@@ -1,0 +1,23 @@
+<script src='forge-sha256.min.js'></script>
+<script>
+window.addEventListener("message", function(event){
+    var PREFIX = 'sha256-';
+    var isHash = /^[a-fA-F0-9]{64}$/.test(event.data);
+    var hash, source;
+    if( isHash ) {
+        hash = event.data.toLowerCase();
+        source = window.localStorage[PREFIX+hash];
+        event.source.postMessage(
+            JSON.stringify({
+                hash: hash,
+                source: source}),
+            event.origin);
+    }
+    else {
+        source = event.data;
+        hash = forge_sha256(source);
+        localStorage[PREFIX+hash] = source;
+    }
+    // console.log(isHash, hash,'->',(source||'').slice(0,1000));
+}, false);
+</script>
